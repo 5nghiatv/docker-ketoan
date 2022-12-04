@@ -1,0 +1,212 @@
+version: '3.7'
+
+services:
+  ketoan-acn-lamp:
+  # docker commit e86 5nghiatv/ketoan-acn-lamp (Xóa hết chỉ giữ index.php & html & Nhớ xóa rm -rf src/ in docker)
+  # ------ for build
+    # docker build --build-arg PHP_VERSION=8.0 -t=5nghiatv/ketoan-lamp:latest -f ./docker/Dockerfile .
+    # hoặc
+    # build: ./docker
+    # image: '5nghiatv/ketoan-lamp'
+  # ------ for distribute
+    image: '5nghiatv/ketoan-acn-lamp'
+  # ----------  
+    container_name: 'ketoan-acn-lamp'
+    hostname: 'ketoan'
+    restart: 'always'
+    # domainname: 'example.com'
+    links: 
+      - mongo
+      - redis
+    volumes:
+    - ./app:/app
+    - ./data/mysql:/var/lib/mysql
+    ports:
+    - '80:80'
+    - '8088:8088'
+    - '3306:3306'
+
+  mongo:
+    image: mongo:4.4
+    container_name: 'mongo'
+    hostname: 'mongo'
+    restart: 'always'
+    # domainname: 'example.com'
+    environment:
+    - 'MONGO_INITDB_ROOT_USERNAME=root'
+    - 'MONGO_INITDB_ROOT_PASSWORD=nghiatv'
+    ports:
+    - '27017:27017'
+    volumes:
+    - ./data/mongodb:/data/db
+
+  redis:
+    container_name: 'redis'
+    image: redis:latest
+    ports:
+      - "127.0.0.1:6379:6379"
+
+# volumes:
+#   mongodb
+#   mysql
+#   app
+
+# =======================================
+# MÁY DELL XPS - CHỈ DÙNG MONGODB 4.4
+# Docker Desktop - CHỈ DÙNG 4.91
+# =======================================
+
+  # mongo-express:
+  #   image: mongo-express
+  #   # container_name: mongo-express
+  #   container_name: '${COMPOSE_PROJECT_NAME}-mongo-express'
+  #   restart: always
+  #   ports:
+  #     - "28081:8081"
+  #   environment:
+  #     ME_CONFIG_MONGODB_SERVER: mongodb
+  #     ME_CONFIG_BASICAUTH_USERNAME: root
+  #     ME_CONFIG_BASICAUTH_PASSWORD: nghiatv
+  #     #ME_CONFIG_MONGODB_AUTH_DATABASE: admin
+  #     ME_CONFIG_MONGODB_ADMINUSERNAME: root
+  #     ME_CONFIG_MONGODB_ADMINPASSWORD: nghiatv
+  #     ME_CONFIG_MONGODB_URL: mongo://root:nghiatv@mongo:27017/
+  #   links:
+  #     - mongodb
+
+
+# WINDOWS Cài git & node ( Download file exe)
+# npm install -g @vue/cli
+# npm install --global yarn ( Neu ERROR : Set-ExecutionPolicy RemoteSigned)
+
+
+# MacOS Cài HomeBrew : 
+  # /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  #  brew install git
+  #  brew install node
+  #  brew install yarn
+  #  brew install vue-cli
+  #  brew install -g express 
+  #  brew tap heroku/brew && brew install heroku
+
+  # vue create hello-world
+
+
+# RUN COMMAND
+# docker-compose up -d
+# docker-compose down
+# docker rm -f $(docker ps -a -q)
+# docker network prune
+# docker volume prune
+# docker container prune
+# docker image prune
+
+# ---- Uninstall the Docker Engine, CLI, containerd, and Docker Compose packages:
+# sudo apt-get purge docker-ce docker-ce-cli containerd.io docker-compose-plugin
+# ---- Images, containers, volumes, or custom configuration files on your host aren’t automatically removed. To delete all images, containers, and volumes:
+# sudo rm -rf /var/lib/docker
+# sudo rm -rf /var/lib/containerd
+
+# docker-compose exec webserver bash
+# docker exec -it lamp-database mysql -u root -p
+# GRANT ALL PRIVILEGES ON *.* TO 'docker'@'%'; flush privileges;
+# In my case the <<< solution did not work. Instead I used -e.
+# docker exec -i lamp-database mysql -u root -p nghia@tv < /path/to/script.sql
+# docker exec -i lamp-database  mysql -uroot -pnghia@tv  <<< "GRANT ALL PRIVILEGES ON *.* TO 'docker'@'%'; FLUSH PRIVILEGES; CREATE DATABASE IF NOT EXISTS ketoan_upload;"
+
+# docker exec -it lamp-mongodb bash  // Terminal mongo
+# mongo admin -u root -p nghia@tv    // Login
+# show dbs - show roles - show users - show collections
+
+# docker exec -i lamp-mongodb /usr/bin/mongodump --username root --password nghiatv --authenticationDatabase admin --db ketoan --out /dump 
+# docker cp lamp-mongodb:/dump [~/Downloads/]dump    //  Lưu trong thư mục Downloads của system
+# docker cp ~/Downloads/dump lamp-mongodb:/dump     // Copy dump files backup to container
+# docker exec -i lamp-mongodb /usr/bin/mongorestore --username root --password nghiatv --authenticationDatabase admin --db ketoan /dump/ketoan 
+
+# If you use Windows+VirtualBox this will resolve the issue: 
+# bcdedit /set hypervisorlaunchtype auto 
+# DISM /Online /Enable-Feature:Microsoft-Hyper-V
+
+# How to [Un] install Homebrew
+# ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/[ un ]install)"
+
+# git clone https://github.com/harshalone/docker-compose-lamp.git
+# cd docker-compose-lamp/
+# cp sample.env .env
+# docker-compose up -d
+# http://localhost
+
+# Cập nhật github repo
+# Nếu bạn clone thì sửa lại cái git thành dạng này: 
+# git clone https://<token>@github.com/<username>/<repo>
+# hoặc nếu bạn đã có repo thì dùng lệnh này để sửa lại cái repo
+# git remote set-url origin https://<token>@github.com/<username>/<repo>
+
+#  git remote set-url origin https://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@github.com/5nghiatv/kt2022.git
+#  git push origin master
+
+# =======================================
+# <!-- Upload những thiết đặt, extensions đã cài cho VSCode
+# Dùng phím tắt ====> Shift + Alt + U 
+# hoặc search từ command Palette, search từ sync ,Nó sẽ yêu cầu nhập giá trị token vừa mới tạo
+
+# Download các thiết từ gist về
+# Dùng phím tắt ====> Shift + Alt + D 
+# hoặc gọi từ command palette , Nó sẽ yêu cầu nhập lại token và gist id đã tạo, điền vào, xong!  -->
+
+# ======================================= SORT ARRAY OBJECT
+# this.invoices.sort((a, b) => (a.invoiceNo > b.invoiceNo ? 1 : -1))
+# =======================================
+# heroku ps -a kt2022    
+
+# Website !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# https://uptimerobot.com/dashboard#792412766 - 5nghiatv@gmail.com
+# https://app.netlify.com/sites/maithao/overview - 5nghiatv@gmail.com ,psw: Tranmeji@1
+# https://maithao.netlify.app/
+
+# ------ Crack parallels Desktop
+# cd desktop/thuoc
+# chmod +x ./install.sh && sudo ./install.sh
+# ------ Fix fix Commander One NOT RUN
+# xattr -cr '/Applications/Music Tag Editor Pro.app'
+
+# ===== UBUNTU ==============
+# ----- Cài docker theo hướng dẩn của Docker
+# sudo usermod -aG docker username  (Nhớ thay username bằng user của bạn : ECHO $USER)
+# ----- Cài NodeJS & Vue Cli
+# sudo apt install curl
+# apt update -y  (#) curl -sL https://deb.nodesource.com/setup_15.x | sudo -E bash -
+# apt-get install -y nodejs  (#) node -v && npm -v
+# npm install -g @vue/cli (#) vue --version  (#) vue create hello-world
+# sudo snap install code --classic
+#----------------------------------------
+# ----- Tạo lại image
+# ----- Apache/2.4.29 (Ubuntu) - PHP 7.4.23 - MySQL Server 5.7.35-0ubuntu0.18.04.2
+# docker build --build-arg PHP_VERSION=7.4 -t=5nghiatv/ketoan-lamp:latest -f ./1804/Dockerfile .
+# docker build --build-arg PHP_VERSION=7.4 -t=5nghiatv/ketoan-lamp:latest -f ./2004/Dockerfile .
+# ----- Run image tạo container
+# docker run -i -t -p "80:80" -p "8088:8088" -p "3306:3306" -v ${PWD}/app:/app -v ${PWD}/mysql:/var/lib/mysql 5nghiatv/ketoan-lamp:latest
+# docker run -i -t -p "80:80" -p "8088:8088" -p "3306:3306" -v ${PWD}/app:/app -v ${PWD}/mysql:/var/lib/mysql mattrayner/lamp:latest
+# --------------------------------
+# xem port --->  netstat -anvp tcp | awk 'NR<3 || /LISTEN/'
+# xem ip netword --->  docker inspect -f '{{.Name}} - {{.NetworkSettings.IPAddress }}' $(docker ps -aq)
+# ------------------------------- web-ketoan NGHIA tạo
+# ------- ketoan-lamp-vue
+# docker build --build-arg PHP_VERSION=8.0 -t=5nghiatv/ketoan-lamp-vue:latest -f ./docker/Dockerfile .
+# docker run -i -t -p "80:80" -p "8088:8088" -p "3306:3306" -v ${PWD}/app:/app -v ${PWD}/data/mysql:/var/lib/mysql 5nghiatv/ketoan-lamp-vue:latest
+# rm -rf node_modules 
+
+# -----------------------------------
+# -------- QUI TRÌNH tạo image: '5nghiatv/ketoan-acn-lamp'
+# set APP_PORT=8088 in ./env - SET SẴN IN .ENV PRODUCTION không tác dụng
+# cp -R app_src/{*,.*}  app/
+# docker build --no-cache --build-arg PHP_VERSION=8.0 -t=5nghiatv/ketoan-lamp:latest -f ./docker/Dockerfile .
+# docker run -i -t -p "80:80" -p "8088:8088" -p "3306:3306" -v ${PWD}/app:/app -v ${PWD}/data/mysql:/var/lib/mysql 5nghiatv/ketoan-lamp:latest
+# rm -rf ./app/{*,.*} && cp -r app_src/html app/html && cp app_src/index.php  app/ && docker ps
+# docker ps  (Lấy ID gán bên dưới)
+# docker exec 0c43 rm -rf src/ 
+# docker commit 0c43 5nghiatv/ketoan-acn-lamp 
+# docker stop 0c43 && docker rm 0c43
+# docker-compose up -d
+
+
