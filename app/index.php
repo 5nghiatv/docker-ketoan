@@ -38,7 +38,7 @@ if (mysqli_connect_errno()) {
     if (mysqli_connect_errno()){ 
     } else {
         // ALTER USER 'admin'@'%' IDENTIFIED BY 'nghia@tv';GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%'; FLUSH PRIVILEGES;
-        $query = "CREATE USER IF NOT EXISTS  'root'@'%' IDENTIFIED BY 'nghia@tv'; ALTER USER 'root'@'%' IDENTIFIED BY 'nghia@tv'; ALTER USER 'root'@'localhost' IDENTIFIED BY 'nghia@tv'; GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION; GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION; FLUSH PRIVILEGES; CREATE DATABASE IF NOT EXISTS ketoan_xuanmai; CREATE DATABASE IF NOT EXISTS ketoan_upload ";
+        $query = "CREATE USER IF NOT EXISTS  'root'@'%' IDENTIFIED WITH mysql_native_password BY 'nghia@tv'; ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'nghia@tv'; ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'nghia@tv'; GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION; GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION; FLUSH PRIVILEGES; CREATE DATABASE IF NOT EXISTS ketoan_xuanmai; CREATE DATABASE IF NOT EXISTS ketoan_upload ";
         /* execute multi query */
         mysqli_multi_query($link, $query);
         $link = mysqli_connect("localhost", "root", "nghia@tv", null);

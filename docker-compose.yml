@@ -1,5 +1,5 @@
 version: '3.7'
-
+# ================================ SOUREC:  https://github.com/mattrayner/docker-lamp
 services:
   ketoan-acn-lamp:
   # docker commit e86 5nghiatv/ketoan-acn-lamp (Xóa hết chỉ giữ index.php & html & Nhớ xóa rm -rf src/ in docker)
@@ -179,15 +179,17 @@ services:
 # apt-get install -y nodejs  (#) node -v && npm -v
 # npm install -g @vue/cli (#) vue --version  (#) vue create hello-world
 # sudo snap install code --classic
-#----------------------------------------
-# ----- Tạo lại image
+#----------------------------------------  
+# ----- Tạo lại image --- 
 # ----- Apache/2.4.29 (Ubuntu) - PHP 7.4.23 - MySQL Server 5.7.35-0ubuntu0.18.04.2
 # docker build --build-arg PHP_VERSION=7.4 -t=5nghiatv/ketoan-lamp:latest -f ./1804/Dockerfile .
 # docker build --build-arg PHP_VERSION=7.4 -t=5nghiatv/ketoan-lamp:latest -f ./2004/Dockerfile .
 # ----- Run image tạo container
 # docker run -i -t -p "80:80" -p "8088:8088" -p "3306:3306" -v ${PWD}/app:/app -v ${PWD}/mysql:/var/lib/mysql 5nghiatv/ketoan-lamp:latest
-# docker run -i -t -p "80:80" -p "8088:8088" -p "3306:3306" -v ${PWD}/app:/app -v ${PWD}/mysql:/var/lib/mysql mattrayner/lamp:latest
-# --------------------------------
+
+# ================================ SOUREC:  https://github.com/mattrayner/docker-lamp
+# docker run -i -t -p "80:80" -p "8088:8088" -p "3306:3306" -v ${PWD}/app:/app -v ${PWD}/data2/mysql:/var/lib/mysql mattrayner/lamp:latest
+# ================================
 # xem port --->  netstat -anvp tcp | awk 'NR<3 || /LISTEN/'
 # xem ip netword --->  docker inspect -f '{{.Name}} - {{.NetworkSettings.IPAddress }}' $(docker ps -aq)
 # ------------------------------- web-ketoan NGHIA tạo
@@ -200,13 +202,14 @@ services:
 # git remote set-url origin git://github.com/YourDirectory/YourProject.git
 
 # -----------------------------------
+# SRC ===> docker run -i -t -p "80:80" -p "8088:8088" -p "3306:3306" -v ${PWD}/app:/app -v ${PWD}/data2/mysql:/var/lib/mysql mattrayner/lamp:latest
 # -------- QUI TRÌNH tạo image: '5nghiatv/ketoan-acn-lamp'
 # set APP_PORT=8088 in ./env - SET SẴN IN .ENV PRODUCTION không tác dụng
 # docker rm -f $(docker ps -a -q)
 # cp -R app_src/{*,.*}  app/
 # docker build --no-cache --build-arg PHP_VERSION=8.0 -t=5nghiatv/ketoan-lamp:latest -f ./docker/Dockerfile .
 # docker run -i -t -p "80:80" -p "8088:8088" -p "3306:3306" -v ${PWD}/app:/app -v ${PWD}/data/mysql:/var/lib/mysql 5nghiatv/ketoan-lamp:latest
-# rm -rf ./app/{*,.*} && cp -r app_src/html app/html && cp app_src/index.php  app/ && docker ps
+# rm -rf ./app/{*,.*} && cp -r app_src/html app/html && cp app_src/index.php  app/ 
 # docker exec $(docker ps -a -q) rm -rf src/ 
 # docker commit $(docker ps -a -q) 5nghiatv/ketoan-acn-lamp
 # docker rm -f $(docker ps -a -q) && docker-compose up -d
