@@ -25,6 +25,12 @@ services:
     - '80:80'
     - '8088:8088'
     - '3306:3306'
+    # command: ['mysqld', '--sql_mode=NO_ENGINE_SUBSTITUTION', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    environment:
+    - 'CREATE_MYSQL_BASIC_USER_AND_DB=true'
+    - 'MYSQL_USER_NAME=nghiatv'
+    - 'MYSQL_USER_DB=ketoan_xuanmai'
+    - 'MYSQL_USER_PASS=nghia@tv'
 
   mongo:
     image: mongo:4.4
@@ -200,6 +206,9 @@ services:
 # ls -al ~/.ssh --- git remote -v -- git branch -m <oldname> <newname>
 # git config --get remote.origin.url
 # git remote set-url origin git://github.com/YourDirectory/YourProject.git
+# mysql -u root -p -e "SET GLOBAL sql_mode = 'NO_ENGINE_SUBSTITUTION';"
+# SELECT @@sql_mode ;SHOW SESSION VARIABLES LIKE 'character\_set\_%'; SHOW SESSION VARIABLES LIKE 'collation\_%';
+# mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
 
 # -----------------------------------
 # SRC ===> docker run -i -t -p "80:80" -p "8088:8088" -p "3306:3306" -v ${PWD}/app:/app -v ${PWD}/data2/mysql:/var/lib/mysql mattrayner/lamp:latest
@@ -209,9 +218,7 @@ services:
 # cp -R app_src/{*,.*}  app/
 # docker build --no-cache --build-arg PHP_VERSION=8.0 -t=5nghiatv/ketoan-lamp:latest -f ./docker/Dockerfile .
 # docker run -i -t -p "80:80" -p "8088:8088" -p "3306:3306" -v ${PWD}/app:/app -v ${PWD}/data/mysql:/var/lib/mysql 5nghiatv/ketoan-lamp:latest
-# rm -rf ./app/{*,.*} && cp -r app_src/html app/html && cp app_src/index.php  app/ 
-# docker exec $(docker ps -a -q) rm -rf src/ 
-# docker commit $(docker ps -a -q) 5nghiatv/ketoan-acn-lamp
+# rm -rf ./app/{*,.*} && docker exec $(docker ps -a -q) rm -rf src/ 
+# docker commit $(docker ps -a -q) 5nghiatv/ketoan-acn-lamp && cp -r app_src/html app/html && cp app_src/index.php app/ 
 # docker rm -f $(docker ps -a -q) && docker-compose up -d
-
 
