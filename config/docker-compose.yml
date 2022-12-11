@@ -1,0 +1,182 @@
+version: "3"
+
+services:
+  webserver:
+    build: 
+      context: ./bin/${PHPVERSION}
+    container_name: '${COMPOSE_PROJECT_NAME}-${PHPVERSION}'
+    restart: 'always'
+    ports:
+      - "${HOST_MACHINE_UNSECURE_HOST_PORT}:80"
+      - "${HOST_MACHINE_SECURE_HOST_PORT}:443"
+    links: 
+      - database
+    volumes: 
+      - ${DOCUMENT_ROOT-./www}:/var/www/html
+      - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
+      - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
+      - ${LOG_DIR-./logs/apache2}:/var/log/apache2
+    environment:
+      PMA_PORT: ${HOST_MACHINE_PMA_PORT}
+      KETOAN_PORT: ${HOST_MACHINE_KETOAN_PORT}
+  database:
+    build:
+      context: "./bin/${DATABASE}"
+    container_name: '${COMPOSE_PROJECT_NAME}-database'
+    restart: 'always'
+    ports:
+      - "127.0.0.1:${HOST_MACHINE_MYSQL_PORT}:3306"
+    volumes: 
+      - ${MYSQL_DATA_DIR-./data/mysql}:/var/lib/mysql
+      - ${MYSQL_LOG_DIR-./logs/mysql}:/var/log/mysql
+      # - ./sqlinit/db-init.sql:/docker-entrypoint-initdb.d/db-init.sql
+
+    environment:
+      # MYSQL_ROOT_HOST: "%" 
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    command: ['mysqld', '--sql_mode=NO_ENGINE_SUBSTITUTION', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: '${COMPOSE_PROJECT_NAME}-phpmyadmin'
+    links:
+      - database
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+      PMA_USER: ${MYSQL_USER}
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
+      # MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      # MYSQL_USER: ${MYSQL_USER}
+      # MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - '${HOST_MACHINE_PMA_PORT}:80'
+    volumes: 
+      - /sessions
+      - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/conf.d/php-phpmyadmin.ini
+      - ./config/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
+
+  mongodb:
+    image: mongo
+    container_name: '${COMPOSE_PROJECT_NAME}-mongodb'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: nghiatv
+    ports:
+      - 27017:27017
+    volumes:
+      - ${MONGO_DATA_DIR-./data/mongodb}:/data/db
+
+# =======================================
+# MÁY DELL XPS - CHỈ DÙNG MONGODB 4.4
+# Docker Desktop - CHỈ DÙNG 4.91
+# =======================================
+
+  # mongo-express:
+  #   image: mongo-express
+  #   # container_name: mongo-express
+  #   container_name: '${COMPOSE_PROJECT_NAME}-mongo-express'
+  #   restart: always
+  #   ports:
+  #     - "28081:8081"
+  #   environment:
+  #     ME_CONFIG_MONGODB_SERVER: mongodb
+  #     ME_CONFIG_BASICAUTH_USERNAME: root
+  #     ME_CONFIG_BASICAUTH_PASSWORD: nghiatv
+  #     #ME_CONFIG_MONGODB_AUTH_DATABASE: admin
+  #     ME_CONFIG_MONGODB_ADMINUSERNAME: root
+  #     ME_CONFIG_MONGODB_ADMINPASSWORD: nghiatv
+  #     ME_CONFIG_MONGODB_URL: mongo://root:nghiatv@mongo:27017/
+  #   links:
+  #     - mongodb
+
+  redis:
+    container_name: '${COMPOSE_PROJECT_NAME}-redis'
+    image: redis:latest
+    ports:
+      - "127.0.0.1:${HOST_MACHINE_REDIS_PORT}:6379"
+
+
+# WINDOWS Cài git & node ( Download file exe)
+# npm install -g @vue/cli
+# npm install --global yarn ( Neu ERROR : Set-ExecutionPolicy RemoteSigned)
+
+
+# MacOS Cài HomeBrew : 
+  # /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  #  brew install git
+  #  brew install node
+  #  brew install yarn
+  #  brew install vue-cli
+  #  brew tap heroku/brew && brew install heroku
+
+
+# RUN COMMAND
+# docker-compose up -d
+# docker-compose down
+
+# docker-compose exec webserver bash
+# docker exec -it lamp-database mysql -u root -p
+# GRANT ALL PRIVILEGES ON *.* TO 'docker'@'%'; flush privileges;
+# In my case the <<< solution did not work. Instead I used -e.
+# docker exec -i lamp-database mysql -u root -p nghia@tv < /path/to/script.sql
+# docker exec -i lamp-database  mysql -uroot -pnghia@tv  <<< "GRANT ALL PRIVILEGES ON *.* TO 'docker'@'%'; FLUSH PRIVILEGES; CREATE DATABASE IF NOT EXISTS ketoan_upload;"
+
+# docker exec -it lamp-mongodb bash  // Terminal mongo
+# mongo admin -u root -p nghia@tv    // Login
+# show dbs - show roles - show users - show collections
+
+# docker exec -i lamp-mongodb /usr/bin/mongodump --username root --password nghiatv --authenticationDatabase admin --db ketoan --out /dump 
+# docker cp lamp-mongodb:/dump [~/Downloads/]dump    //  Lưu trong thư mục Downloads của system
+# docker cp ~/Downloads/dump lamp-mongodb:/dump     // Copy dump files backup to container
+# docker exec -i lamp-mongodb /usr/bin/mongorestore --username root --password nghiatv --authenticationDatabase admin --db ketoan /dump/ketoan 
+
+# If you use Windows+VirtualBox this will resolve the issue: 
+# bcdedit /set hypervisorlaunchtype auto 
+# DISM /Online /Enable-Feature:Microsoft-Hyper-V
+
+# How to [Un] install Homebrew
+# ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/[ un ]install)"
+
+# git clone https://github.com/harshalone/docker-compose-lamp.git
+# cd docker-compose-lamp/
+# cp sample.env .env
+# docker-compose up -d
+# http://localhost
+
+# Cập nhật github repo
+# Nếu bạn clone thì sửa lại cái git thành dạng này: 
+# git clone https://<token>@github.com/<username>/<repo>
+# hoặc nếu bạn đã có repo thì dùng lệnh này để sửa lại cái repo
+# git remote set-url origin https://<token>@github.com/<username>/<repo>
+
+#  git remote set-url origin https://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@github.com/5nghiatv/kt2022.git
+#  git push origin master
+
+# =======================================
+# <!-- Upload những thiết đặt, extensions đã cài cho VSCode
+# Dùng phím tắt ====> Shift + Alt + U 
+# hoặc search từ command Palette, search từ sync ,Nó sẽ yêu cầu nhập giá trị token vừa mới tạo
+
+# Download các thiết từ gist về
+# Dùng phím tắt ====> Shift + Alt + D 
+# hoặc gọi từ command palette , Nó sẽ yêu cầu nhập lại token và gist id đã tạo, điền vào, xong!  -->
+
+# ======================================= SORT ARRAY OBJECT
+# this.invoices.sort((a, b) => (a.invoiceNo > b.invoiceNo ? 1 : -1))
+# =======================================
+# heroku ps -a kt2022    
+
+# Website !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# https://uptimerobot.com/dashboard#792412766 - 5nghiatv@gmail.com
+# https://app.netlify.com/sites/maithao/overview - 5nghiatv@gmail.com ,psw: Tranmeji@1
+# https://maithao.netlify.app/
+
+# ------ Crack parallels Desktop
+# cd desktop/thuoc
+# chmod +x ./install.sh && sudo ./install.sh
+# ------ Fix fix Commander One NOT RUN
+# xattr -cr '/Applications/Music Tag Editor Pro.app'

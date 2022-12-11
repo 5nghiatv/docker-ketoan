@@ -21,6 +21,10 @@ services:
     volumes:
     - ./app:/app
     - ./data/mysql:/var/lib/mysql
+    # - ./config/mysql/conf.d:/etc/mysql/conf.d
+    # - ./config/php/php.ini:/usr/local/etc/php/php.ini
+
+
     ports:
     - '80:80'
     - '8088:8088'
@@ -209,12 +213,12 @@ services:
 # mysql -u root -p -e "SET GLOBAL sql_mode = 'NO_ENGINE_SUBSTITUTION';"
 # SELECT @@sql_mode ;SHOW SESSION VARIABLES LIKE 'character\_set\_%'; SHOW SESSION VARIABLES LIKE 'collation\_%';
 # mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
-
+# CREATE DATABASE ketoan_nghia CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 # -----------------------------------
 # SRC ===> docker run -i -t -p "80:80" -p "8088:8088" -p "3306:3306" -v ${PWD}/app:/app -v ${PWD}/data2/mysql:/var/lib/mysql mattrayner/lamp:latest
 # -------- QUI TRÌNH tạo image: '5nghiatv/ketoan-acn-lamp'
-# set APP_PORT=8088 in ./env - SET SẴN IN .ENV PRODUCTION không tác dụng
 # docker rm -f $(docker ps -a -q)
+# set APP_PORT=8088 in ./env - SET SẴN IN .ENV PRODUCTION không tác dụng
 # cp -R app_src/{*,.*}  app/
 # docker build --no-cache --build-arg PHP_VERSION=8.0 -t=5nghiatv/ketoan-lamp:latest -f ./docker/Dockerfile .
 # docker run -i -t -p "80:80" -p "8088:8088" -p "3306:3306" -v ${PWD}/app:/app -v ${PWD}/data/mysql:/var/lib/mysql 5nghiatv/ketoan-lamp:latest

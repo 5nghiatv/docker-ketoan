@@ -11,6 +11,7 @@ while [[ RET -ne 0 ]]; do
 done
 
 PASS=${MYSQL_ADMIN_PASS:-$(pwgen -s 12 1)}
+PASS=nghia@tv
 _word=$( [ ${MYSQL_ADMIN_PASS} ] && echo "preset" || echo "random" )
 echo "=> Creating MySQL admin user with ${_word} password"
 
@@ -35,7 +36,7 @@ if [ "$CREATE_MYSQL_USER" = true ]; then
 
     mysql -uroot -e "CREATE USER '${_user}'@'%' IDENTIFIED BY  '${_userpass}'"
     mysql -uroot -e "GRANT USAGE ON *.* TO  '${_user}'@'%' IDENTIFIED BY '${_userpass}'"
-    mysql -uroot -e "CREATE DATABASE IF NOT EXISTS ${_userdb}"
+    mysql -uroot -e "CREATE DATABASE IF NOT EXISTS ${_userdb} CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci"
     mysql -uroot -e "GRANT ALL PRIVILEGES ON ${_userdb}.* TO '${_user}'@'%'"
 fi
 
@@ -56,21 +57,6 @@ if [ "$CREATE_MYSQL_USER" = true ]; then
     echo "a user called '${_user}' with password '${_userpass}'"
     echo "'${_user}' has full access on '${_userdb}'"
 fi
-
-echo "=> Nghĩa set new..."
-    # mysql -uroot -e "CREATE USER IF NOT EXISTS  'root'@'%' IDENTIFIED WITH mysql_native_password BY 'nghia@tv'"
-    # mysql -uroot -e "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'nghia@tv'"
-    # mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'nghia@tv'"
-    # mysql -uroot -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION"
-    # mysql -uroot -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION"
-    # mysql -uroot -e "FLUSH PRIVILEGES"
-    # mysql -uroot -e "CREATE DATABASE IF NOT EXISTS ketoan_xuanmai"
-    # mysql -uroot -e "CREATE DATABASE IF NOT EXISTS ketoan_upload"
-    # mysql -uroot -e "SET GLOBAL sql_mode = 'NO_ENGINE_SUBSTITUTION'"
-    # mysql -uroot -e "SET SESSION sql_mode = 'NO_ENGINE_SUBSTITUTION'"
-    # mysql -uroot -e "SET GLOBAL log_bin_trust_function_creators = 1" 
-    # mysql -uroot -e "SET SESSION log_bin_trust_function_creators = 1" 
-echo "=============>"
 
 echo "enjoy!"
 echo "========================================================================"
