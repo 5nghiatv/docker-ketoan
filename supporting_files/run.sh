@@ -112,4 +112,5 @@ else
 fi
 
 echo "=> Starting supervisord"
+# echo user=root >>  /etc/supervisor/supervisord.conf
 exec supervisord -n

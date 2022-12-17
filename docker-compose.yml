@@ -213,16 +213,23 @@ services:
 # mysql -u root -p -e "SET GLOBAL sql_mode = 'NO_ENGINE_SUBSTITUTION';"
 # SELECT @@sql_mode ;SHOW SESSION VARIABLES LIKE 'character\_set\_%'; SHOW SESSION VARIABLES LIKE 'collation\_%';
 # mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
-# CREATE DATABASE ketoan_nghia CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+# CREATE DATABASE ketoan_nghia CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+# service --status-all
+# Usage: /etc/init.d/mysql start|stop|restart|reload|force-reload|status
+# docker service logs --details ketoan-acn SERVICE|TASK -- docker service ls -q [OPTIONS]
 # -----------------------------------
 # SRC ===> docker run -i -t -p "80:80" -p "8088:8088" -p "3306:3306" -v ${PWD}/app:/app -v ${PWD}/data2/mysql:/var/lib/mysql mattrayner/lamp:latest
 # -------- QUI TRÌNH tạo image: '5nghiatv/ketoan-acn-lamp'
 # docker rm -f $(docker ps -a -q)
 # set APP_PORT=8088 in ./env - SET SẴN IN .ENV PRODUCTION không tác dụng
+# ------------>BEGIN
 # cp -R app_src/{*,.*}  app/
 # docker build --no-cache --build-arg PHP_VERSION=8.0 -t=5nghiatv/ketoan-lamp:latest -f ./docker/Dockerfile .
 # docker run -i -t -p "80:80" -p "8088:8088" -p "3306:3306" -v ${PWD}/app:/app -v ${PWD}/data/mysql:/var/lib/mysql 5nghiatv/ketoan-lamp:latest
-# rm -rf ./app/{*,.*} && docker exec $(docker ps -a -q) rm -rf src/ 
-# docker commit $(docker ps -a -q) 5nghiatv/ketoan-acn-lamp && cp -r app_src/html app/html && cp app_src/index.php app/ 
-# docker rm -f $(docker ps -a -q) && docker-compose up -d
-
+# rm -rf ./app/{*,.*} 
+# docker exec $(docker ps -a -q) rm -rf src/ && cp -r app_src/html app/html && cp app_src/index.php app/  
+# docker commit $(docker ps -a -q) 5nghiatv/ketoan-acn-lamp && docker rm -f $(docker ps -a -q) && docker-compose up -d
+# -----------------------------------
+# docker exec -it ketoan-acn-lamp bash --- docker container logs --details ketoan-acn-lamp
+# docker compose logs - docker compose restart
+# -----------------------------------
