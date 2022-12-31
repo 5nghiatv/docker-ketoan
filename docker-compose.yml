@@ -225,7 +225,7 @@ services:
 # ------------>BEGIN
 # cp -R app_src/{*,.*}  app/
 # docker build --no-cache --build-arg PHP_VERSION=8.0 -t=5nghiatv/ketoan-lamp:latest -f ./docker/Dockerfile .
-# docker run -i -t -p "3306:3306" -p "8088:8088" -p "80:80" -v ${PWD}/app:/app -v ${PWD}/data/mysql:/var/lib/mysql 5nghiatv/ketoan-lamp:latest
+# docker run -i -t -p "80:80" -p "8088:8088" -p "3306:3306" -v ${PWD}/app:/app -v ${PWD}/data/mysql:/var/lib/mysql 5nghiatv/ketoan-lamp:latest
 # rm -rf ./app/{*,.*} 
 # docker exec $(docker ps -a -q) rm -rf src/ && cp -r app_src/html app/html && cp app_src/index.php app/  
 # docker commit $(docker ps -a -q) 5nghiatv/ketoan-acn-lamp && docker rm -f $(docker ps -a -q) && docker-compose up -d
